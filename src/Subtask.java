@@ -1,9 +1,9 @@
 public class Subtask extends Task {
-    Integer epicId;
+    protected Epic epic;
 
-    public Subtask(String name, Integer epicId) {
+    public Subtask(String name, Epic epic) {
         this.name = name;
-        this.epicId = epicId;
+        this.epic = epic;
         status = "NEW";
     }
 }

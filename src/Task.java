@@ -13,15 +13,15 @@ public class Task {
     public Task() {
     }
 
-    public static int getId(Task task) {
-        return task.id;
+    public int getId() {
+        return id;
     }
 
-    public static void setId(int id, Task task) {
-        task.id = id;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public static void setStatus(String status, Task task) {
-        task.status = status;
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
