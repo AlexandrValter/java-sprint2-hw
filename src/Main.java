@@ -1,3 +1,6 @@
+import manager.Manager;
+import tasks.*;
+
 import java.util.ArrayList;
 
 public class Main {
@@ -22,45 +25,22 @@ public class Main {
         System.out.println(manager.getAllTasks());
         System.out.println(manager.getAllEpics());
         System.out.println(manager.getAllSubtasks());
-        printTask(manager, 1);
-        printTask(manager, 2);
-        printEpic(manager, 3);
-        printEpic(manager, 4);
-        printSubtask(manager, 5);
-        printSubtask(manager, 6);
-        printSubtask(manager, 7);
-        subtask3.status = "DONE";
-        subtask1.status = "IN_PROGRESS";
-        task1.status = "IN_PROGRESS";
-        task2.status = "DONE";
+        subtask3.setStatus("DONE");
+        subtask1.setStatus("IN_PROGRESS");
+        task1.setStatus("IN_PROGRESS");
+        task2.setStatus("DONE");
         manager.updateSubtask(subtask1);
         manager.updateSubtask(subtask3);
         manager.updateTask(task1);
         manager.updateTask(task2);
-        printTask(manager, 1);
-        printTask(manager, 2);
-        printEpic(manager, 3);
-        printEpic(manager, 4);
-        printSubtask(manager, 5);
-        printSubtask(manager, 6);
-        printSubtask(manager, 7);
+        System.out.println(manager.getAllTasks());
+        System.out.println(manager.getAllEpics());
+        System.out.println(manager.getAllSubtasks());
         manager.deleteTask(1);
         manager.deleteEpic(3);
         System.out.println(manager.getAllTasks());
         System.out.println(manager.getAllEpics());
         System.out.println(manager.getAllSubtasks());
-    }
-
-    public static void printEpic(Manager manager, int id) {
-        System.out.println(manager.getEpic(id).name + " " + manager.getEpic(id).status);
-    }
-
-    public static void printTask(Manager manager, int id) {
-        System.out.println(manager.getTask(id).name + " " + manager.getTask(id).status);
-    }
-
-    public static void printSubtask(Manager manager, int id) {
-        System.out.println(manager.getSubtask(id).name + " " + manager.getSubtask(id).status);
     }
 }
 
