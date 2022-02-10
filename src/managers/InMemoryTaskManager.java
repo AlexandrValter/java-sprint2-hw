@@ -1,26 +1,39 @@
-package manager;
+package managers;
 
 import tasks.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
-public class Manager {
-    private HashMap<Integer, Task> taskStorage = new HashMap<>();
-    private HashMap<Integer, Epic> epicStorage = new HashMap<>();
-    private HashMap<Integer, Subtask> subtaskStorage = new HashMap<>();
+public class InMemoryTaskManager implements TaskManager {
+    private final HashMap<Integer, Task> taskStorage = new HashMap<>();
+    private final HashMap<Integer, Epic> epicStorage = new HashMap<>();
+    private final HashMap<Integer, Subtask> subtaskStorage = new HashMap<>();
     private Integer id = 1;
+    private final InMemoryHistoryManager history;
 
+    public InMemoryTaskManager(HistoryManager history) {
+        this.history = (InMemoryHistoryManager) history;
+    }
+
+    public InMemoryHistoryManager getHistory() {
+        return history;
+    }
+
+    @Override
     public void addTask(Task task) {
         task.setId(makeId());
         taskStorage.put(task.getId(), task);
     }
 
+    @Override
     public void addEpic(Epic epic) {
         epic.setId(makeId());
         epicStorage.put(epic.getId(), epic);
     }
 
+    @Override
     public void addSubtask(Subtask subtask) {
         subtask.setId(makeId());
         subtaskStorage.put(subtask.getId(), subtask);
@@ -28,55 +41,74 @@ public class Manager {
         subtask.getEpic().setStatus(getEpicStatus(subtask.getEpic().getId()));
     }
 
-    public ArrayList<Task> getAllTasks() {
+    @Override
+    public List<Task> getAllTasks() {
         return new ArrayList<>(taskStorage.values());
     }
 
-    public ArrayList<Epic> getAllEpics() {
+    @Override
+    public List<Epic> getAllEpics() {
         return new ArrayList<>(epicStorage.values());
     }
 
-    public ArrayList<Subtask> getAllSubtasks() {
+    @Override
+    public List<Subtask> getAllSubtasks() {
         return new ArrayList<>(subtaskStorage.values());
     }
 
+    @Override
     public Task getTask(int id) {
+        history.addElement(taskStorage.get(id));
         return taskStorage.get(id);
     }
 
+    @Override
     public Epic getEpic(int id) {
+        this.id = id;
+        history.addElement(epicStorage.get(id));
         return epicStorage.get(id);
     }
 
+    @Override
     public Subtask getSubtask(int id) {
+        history.addElement(subtaskStorage.get(id));
         return subtaskStorage.get(id);
     }
 
+    @Override
     public void clearTasks() {
+        history.deleteMultipleElements(taskStorage);
         taskStorage.clear();
     }
 
+    @Override
     public void clearEpics() {
+        history.deleteMultipleElements(epicStorage);
+        history.deleteMultipleElements(subtaskStorage);
         epicStorage.clear();
         subtaskStorage.clear();
     }
 
+    @Override
     public void clearSubtasks() {
+        history.deleteMultipleElements(subtaskStorage);
         subtaskStorage.clear();
         if (!epicStorage.isEmpty()) {
             for (int key : epicStorage.keySet()) {
                 epicStorage.get(key).getSubtaskList().clear();
-                epicStorage.get(key).setStatus("NEW");
+                epicStorage.get(key).setStatus(Statuses.NEW);
             }
         }
     }
 
+    @Override
     public void updateTask(Task task) {
         if (taskStorage.containsKey(task.getId())) {
             taskStorage.put(task.getId(), task);
         }
     }
 
+    @Override
     public void updateEpic(Epic epic) {
         if (epicStorage.containsKey(epic.getId())) {
             epicStorage.put(epic.getId(), epic);
@@ -84,6 +116,7 @@ public class Manager {
         }
     }
 
+    @Override
     public void updateSubtask(Subtask subtask) {
         if (subtaskStorage.containsKey(subtask.getId())) {
             subtaskStorage.put(subtask.getId(), subtask);
@@ -94,15 +127,20 @@ public class Manager {
         }
     }
 
+    @Override
     public void deleteTask(int id) {
+        history.deleteElement(taskStorage.get(id));
         taskStorage.remove(id);
     }
 
+    @Override
     public void deleteEpic(int id) {
+        history.deleteElement(epicStorage.get(id));
         epicStorage.remove(id);
         ArrayList<Integer> idSubtaskDelete = new ArrayList<>();
         for (Integer key : subtaskStorage.keySet()) {
             if (subtaskStorage.get(key).getEpic().getId() == id) {
+                history.deleteElement(subtaskStorage.get(key));
                 idSubtaskDelete.add(key);
             }
         }
@@ -113,35 +151,38 @@ public class Manager {
         }
     }
 
+    @Override
     public void deleteSubtask(int id) {
+        history.deleteElement(subtaskStorage.get(id));
         Epic epic = subtaskStorage.get(id).getEpic();
         epic.deleteSubtaskFromEpic(subtaskStorage.get(id));
         subtaskStorage.remove(id);
         epic.setStatus(getEpicStatus(epic.getId()));
     }
 
-    public ArrayList<Subtask> getSubtasksFromEpic(int epicId) {
+    @Override
+    public List<Subtask> getSubtasksFromEpic(int epicId) {
         return epicStorage.get(epicId).getSubtaskList();
     }
 
-    private String getEpicStatus(int id) {
-        ArrayList<String> statusSubtasks = new ArrayList<>();
-        String status = "ERROR";
+    private Statuses getEpicStatus(int id) {
+        List<Statuses> statusSubtasks = new ArrayList<>();
+        Statuses status = null;
         boolean amount = epicStorage.get(id).getSubtaskList().isEmpty();
         if (amount) {
-            status = "NEW";
+            status = Statuses.NEW;
         } else {
             for (int i = 0; i < epicStorage.get(id).getSubtaskList().size(); i++) {
                 statusSubtasks.add(epicStorage.get(id).getSubtaskList().get(i).getStatus());
             }
-            if (statusSubtasks.contains("NEW")) {
-                status = "NEW";
-            } else if (statusSubtasks.contains("DONE") && !statusSubtasks.contains("NEW")
-                    && !statusSubtasks.contains("IN_PROGRESS")) {
-                status = "DONE";
+            if (statusSubtasks.contains(Statuses.NEW)) {
+                status = Statuses.NEW;
+            } else if (statusSubtasks.contains(Statuses.DONE) && !statusSubtasks.contains(Statuses.NEW)
+                    && !statusSubtasks.contains(Statuses.IN_PROGRESS)) {
+                status = Statuses.DONE;
             }
-            if (statusSubtasks.contains("IN_PROGRESS")) {
-                status = "IN_PROGRESS";
+            if (statusSubtasks.contains(Statuses.IN_PROGRESS)) {
+                status = Statuses.IN_PROGRESS;
             }
         }
         return status;

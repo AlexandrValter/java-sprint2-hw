@@ -1,17 +1,17 @@
 package tasks;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class Epic extends Task {
-    private ArrayList<Subtask> subtaskList;
+    private List<Subtask> subtaskList;
 
-    public Epic(String name, ArrayList<Subtask> subtaskList) {
+    public Epic(String name, List<Subtask> subtaskList) {
         this.setName(name);
         this.subtaskList = subtaskList;
-        this.setStatus("NEW");
+        this.setStatus(Statuses.NEW);
     }
 
-    public ArrayList<Subtask> getSubtaskList() {
+    public List<Subtask> getSubtaskList() {
         return subtaskList;
     }
 
@@ -38,4 +38,3 @@ public class Epic extends Task {
         return result;
     }
 }
-

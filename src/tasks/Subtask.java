@@ -6,7 +6,7 @@ public class Subtask extends Task {
     public Subtask(String name, Epic epic) {
         this.setName(name);
         this.epic = epic;
-        this.setStatus("NEW");
+        this.setStatus(Statuses.NEW);
     }
 
     public Epic getEpic() {
@@ -22,6 +22,4 @@ public class Subtask extends Task {
                 ", epic=" + getEpic().getName() +
                 "} ";
     }
-
-
 }
