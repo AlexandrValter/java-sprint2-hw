@@ -2,7 +2,6 @@ package managers;
 
 import tasks.Task;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 
 public class InMemoryHistoryManager<T> implements HistoryManager {
@@ -10,12 +9,11 @@ public class InMemoryHistoryManager<T> implements HistoryManager {
 
     @Override
     public void addElement(Task task) {
-        if (tasksHistory.size() < 10) {
-            tasksHistory.addLast(task);
-        } else {
+        if (tasksHistory.size() == 10) {
             tasksHistory.removeFirst();
-            tasksHistory.addLast(task);
         }
+        tasksHistory.addLast(task);
+
     }
 
     @Override
@@ -32,17 +30,10 @@ public class InMemoryHistoryManager<T> implements HistoryManager {
         return output;
     }
 
-    public void deleteElement(Task task) {
+    @Override
+    public void remove(Task task) {
         while (tasksHistory.contains(task)) {
             tasksHistory.remove(task);
-        }
-    }
-
-    public void deleteMultipleElements(HashMap<Integer, T> taskStorage) {
-        for (T task : taskStorage.values()) {
-            while (tasksHistory.contains(task)) {
-                tasksHistory.remove(task);
-            }
         }
     }
 }

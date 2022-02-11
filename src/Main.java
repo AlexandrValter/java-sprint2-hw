@@ -7,8 +7,7 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        InMemoryTaskManager manager = (InMemoryTaskManager) Managers.getDefault();
-        InMemoryHistoryManager history = manager.getHistory();
+        TaskManager manager = Managers.getDefault();
         Task task1 = new Task("Задача №1", "Описание задачи №1");
         manager.addTask(task1);
         Task task2 = new Task("Задача №2", "Описание задачи №2");
@@ -39,13 +38,13 @@ public class Main {
         System.out.println(manager.getAllTasks());
         System.out.println(manager.getAllEpics());
         System.out.println(manager.getAllSubtasks());
-        System.out.print(history);
+        System.out.print(manager.getHistory());
         manager.deleteTask(1);
         manager.deleteEpic(3);
         System.out.println(manager.getAllTasks());
         System.out.println(manager.getAllEpics());
         System.out.println(manager.getAllSubtasks());
-        System.out.print(history);
+        System.out.print(manager.getHistory());
         manager.getTask(2);
         manager.getEpic(4);
         manager.getTask(2);
@@ -56,8 +55,8 @@ public class Main {
         manager.getTask(2);
         manager.getSubtask(6);
         manager.getEpic(4);
-        System.out.print(history);
+        System.out.print(manager.getHistory());
         manager.deleteEpic(4);
-        System.out.print(history);
+        System.out.print(manager.getHistory());
     }
 }
