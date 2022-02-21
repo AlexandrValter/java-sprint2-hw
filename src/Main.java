@@ -20,43 +20,33 @@ public class Main {
         manager.addEpic(epic2);
         Subtask subtask1 = new Subtask("Подзадача №1", manager.getEpic(3));
         Subtask subtask2 = new Subtask("Подзадача №2", manager.getEpic(3));
-        Subtask subtask3 = new Subtask("Подзадача №3", manager.getEpic(4));
+        Subtask subtask3 = new Subtask("Подзадача №3", manager.getEpic(3));
         manager.addSubtask(subtask1);
         manager.addSubtask(subtask2);
         manager.addSubtask(subtask3);
-        System.out.println(manager.getAllTasks());
-        System.out.println(manager.getAllEpics());
-        System.out.println(manager.getAllSubtasks());
-        subtask3.setStatus(Statuses.DONE);
-        subtask1.setStatus(Statuses.IN_PROGRESS);
-        task1.setStatus(Statuses.IN_PROGRESS);
-        task2.setStatus(Statuses.DONE);
-        manager.updateSubtask(subtask1);
-        manager.updateSubtask(subtask3);
-        manager.updateTask(task1);
-        manager.updateTask(task2);
-        System.out.println(manager.getAllTasks());
-        System.out.println(manager.getAllEpics());
-        System.out.println(manager.getAllSubtasks());
-        System.out.print(manager.getHistory());
-        manager.deleteTask(1);
+        printList(manager.getHistory());
+        manager.getTask(2);
+        manager.getEpic(4);
+        manager.getTask(1);
+        manager.getSubtask(5);
+        manager.getTask(2);
+        manager.getSubtask(5);
+        manager.getSubtask(5);
+        manager.getEpic(3);
+        manager.getSubtask(7);
+        manager.getEpic(4);
+        printList(manager.getHistory());
+        manager.deleteTask(2);
+        printList(manager.getHistory());
         manager.deleteEpic(3);
-        System.out.println(manager.getAllTasks());
-        System.out.println(manager.getAllEpics());
-        System.out.println(manager.getAllSubtasks());
-        System.out.print(manager.getHistory());
-        manager.getTask(2);
-        manager.getEpic(4);
-        manager.getTask(2);
-        manager.getSubtask(6);
-        manager.getEpic(4);
-        manager.getTask(2);
-        manager.getSubtask(6);
-        manager.getTask(2);
-        manager.getSubtask(6);
-        manager.getEpic(4);
-        System.out.print(manager.getHistory());
-        manager.deleteEpic(4);
-        System.out.print(manager.getHistory());
+        printList(manager.getHistory());
+    }
+
+    //метод для вывода истории просмотров задач при тестах
+    public static void printList(List<Task> list) {
+        System.out.println("История просмотров:");
+        for (Task task : list) {
+            System.out.println(task);
+        }
     }
 }

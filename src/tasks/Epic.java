@@ -29,7 +29,7 @@ public class Epic extends Task {
                 "name='" + super.getName() + '\'' +
                 ", id=" + super.getId() +
                 ", status=" + super.getStatus() +
-                "} ";
+                "}";
         if (subtaskList != null) {
             result = result + ", subtaskList.size=" + getSubtaskList().size();
         } else {
