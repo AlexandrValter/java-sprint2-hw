@@ -7,14 +7,14 @@ import java.util.HashMap;
 import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
-    private final HashMap<Integer, Task> taskStorage = new HashMap<>();
-    private final HashMap<Integer, Epic> epicStorage = new HashMap<>();
-    private final HashMap<Integer, Subtask> subtaskStorage = new HashMap<>();
+    private HashMap<Integer, Task> taskStorage = new HashMap<>();
+    private HashMap<Integer, Epic> epicStorage = new HashMap<>();
+    private HashMap<Integer, Subtask> subtaskStorage = new HashMap<>();
     private Integer id = 0;
-    private final HistoryManager history = Managers.getDefaultHistoryManager();
+    private HistoryManager history = Managers.getDefaultHistoryManager();
 
     @Override
-    public List<Task> getHistory() {
+    public List<Task> getHistoryList() {
         return history.getHistory();
     }
 
@@ -192,7 +192,27 @@ public class InMemoryTaskManager implements TaskManager {
         return status;
     }
 
+    public HashMap<Integer, Task> getTaskStorage() {
+        return taskStorage;
+    }
+
+    public HashMap<Integer, Epic> getEpicStorage() {
+        return epicStorage;
+    }
+
+    public HashMap<Integer, Subtask> getSubtaskStorage() {
+        return subtaskStorage;
+    }
+
+    public HistoryManager getHistory() {
+        return history;
+    }
+
     private int makeId() {
         return ++id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 }

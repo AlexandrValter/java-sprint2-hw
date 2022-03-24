@@ -9,6 +9,24 @@ public class InMemoryHistoryManager<T> implements HistoryManager {
     private Map<Integer, Node<Task>> tasksMap = new HashMap<>();
 
     @Override
+    public LinkedListForTasks<Task> getTasksHistory() {
+        return tasksHistory;
+    }
+
+    public void setTasksHistory(LinkedListForTasks<Task> tasksHistory) {
+        this.tasksHistory = tasksHistory;
+    }
+
+    @Override
+    public Map<Integer, Node<Task>> getTasksMap() {
+        return tasksMap;
+    }
+
+    public void setTasksMap(Map<Integer, Node<Task>> tasksMap) {
+        this.tasksMap = tasksMap;
+    }
+
+    @Override
     public List<Task> getHistory() {
         return tasksHistory.getTasks();
     }
@@ -84,5 +102,9 @@ class LinkedListForTasks<T extends Task> {
 
     public Node<T> getLast() {
         return last;
+    }
+
+    public Node<T> getFirst() {
+        return first;
     }
 }

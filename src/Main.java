@@ -24,7 +24,7 @@ public class Main {
         manager.addSubtask(subtask1);
         manager.addSubtask(subtask2);
         manager.addSubtask(subtask3);
-        printList(manager.getHistory());
+        printList(manager.getHistoryList());
         manager.getTask(2);
         manager.getEpic(4);
         manager.getTask(1);
@@ -35,11 +35,11 @@ public class Main {
         manager.getEpic(3);
         manager.getSubtask(7);
         manager.getEpic(4);
-        printList(manager.getHistory());
+        printList(manager.getHistoryList());
         manager.deleteTask(2);
-        printList(manager.getHistory());
+        printList(manager.getHistoryList());
         manager.deleteEpic(3);
-        printList(manager.getHistory());
+        printList(manager.getHistoryList());
     }
 
     //метод для вывода истории просмотров задач при тестах

@@ -9,10 +9,22 @@ public class Epic extends Task {
         this.setName(name);
         this.subtaskList = subtaskList;
         this.setStatus(Statuses.NEW);
+        this.setType(TypeOfTasks.EPIC);
+    }
+
+    public Epic(int id, String name, String description, Statuses status, TypeOfTasks type) {
+        super(id, name, description, status, type);
+    }
+
+    public Epic() {
     }
 
     public List<Subtask> getSubtaskList() {
         return subtaskList;
+    }
+
+    public void setSubtaskList(List<Subtask> subtaskList) {
+        this.subtaskList = subtaskList;
     }
 
     public void addSubtaskToEpic(Subtask subtask) {
@@ -36,5 +48,18 @@ public class Epic extends Task {
             result = result + ", subtaskList=null";
         }
         return result;
+    }
+
+    public String toString(Epic epic) {
+        return super.toString(epic);
+    }
+
+    @Override
+    public Epic fromString(String[] value) {
+        return new Epic(Integer.valueOf(value[0]),
+                value[2],
+                value[4],
+                Statuses.valueOf(value[3]),
+                TypeOfTasks.valueOf(value[1]));
     }
 }
