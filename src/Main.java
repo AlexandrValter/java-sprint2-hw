@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        TaskManager manager = Managers.getDefault();
+        FileBackedTasksManager manager = (FileBackedTasksManager) Managers.getDefault("backup.csv");
         Task task1 = new Task("Задача №1", "Описание задачи №1");
         manager.addTask(task1);
         Task task2 = new Task("Задача №2", "Описание задачи №2");
@@ -35,10 +35,6 @@ public class Main {
         manager.getEpic(3);
         manager.getSubtask(7);
         manager.getEpic(4);
-        printList(manager.getHistoryList());
-        manager.deleteTask(2);
-        printList(manager.getHistoryList());
-        manager.deleteEpic(3);
         printList(manager.getHistoryList());
     }
 
