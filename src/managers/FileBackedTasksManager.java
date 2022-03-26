@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private final Path fileBacked;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         FileBackedTasksManager manager = loadFromFile(Paths.get("backup.csv"));
         System.out.println(manager.getHistoryList());
         System.out.println(manager.getAllTasks());
@@ -144,16 +144,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    static String toString(HistoryManager manager) {
+    private static String toString(HistoryManager manager) {
         String result = "";
-        //немного переписал предложенное условие в цикле for
         for (int i = 0; i < (manager.getHistory().size() - 1); i++) {
             result += manager.getHistory().get(i).getId() + ",";
         }
         return result + manager.getHistory().get(manager.getHistory().size() - 1).getId();
     }
 
-    static List<Integer> fromString(String[] value) {
+    private static List<Integer> fromString(String[] value) {
         List<Integer> history = new ArrayList<>();
         for (String item : value) {
             history.add(Integer.valueOf(item));
@@ -161,10 +160,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return history;
     }
 
-    private List<String> fromFileToString(Path path) throws IOException {
+    private List<String> fromFileToString(Path path) {
         List<String> list;
         try (Stream<String> lines = Files.lines(path)) {
             list = lines.collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new ManagerSaveException();
         }
         return list;
     }
@@ -203,7 +204,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    private static FileBackedTasksManager loadFromFile(Path path) throws IOException {
+    private static FileBackedTasksManager loadFromFile(Path path) {
         FileBackedTasksManager manager = (FileBackedTasksManager) Managers.getDefault(String.valueOf(path.getFileName()));
         List<String> data = new ArrayList<>(manager.fromFileToString(path));
         int currentId = 0;
