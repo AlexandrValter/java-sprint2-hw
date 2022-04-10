@@ -18,6 +18,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         System.out.println(manager.getAllTasks());
         System.out.println(manager.getAllEpics());
         System.out.println(manager.getAllSubtasks());
+        System.out.println(manager.getPrioritizedTasks());
     }
 
     public FileBackedTasksManager(String fileName) {
@@ -117,7 +118,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         save();
     }
 
-    private void save() {
+    protected void save() {
         try (Writer fileWriter = new FileWriter(String.valueOf(fileBacked.getFileName()), StandardCharsets.UTF_8)) {
             fileWriter.write("id,type,name,status,description,epic\n");
             if (!super.getTaskStorage().isEmpty()) {
@@ -179,13 +180,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             } else if (TypeOfTasks.valueOf(value[1]).equals(TypeOfTasks.SUBTASK)) {
                 Subtask subtask = new Subtask().fromString(value);
                 manager.getSubtaskStorage().put(Integer.valueOf(value[0]), subtask);
-                subtask.setEpic(manager.getEpicStorage().get(Integer.valueOf(value[5])));
-                if (subtask.getEpic().getSubtaskList() == null) {
-                    subtask.getEpic().setSubtaskList(new ArrayList<>());
-                    subtask.getEpic().getSubtaskList().add(subtask);
-                } else {
-                    subtask.getEpic().getSubtaskList().add(subtask);
-                }
+                subtask.setEpic(manager.getEpicStorage().get(Integer.valueOf(value[7])));
+                subtask.getEpic().getSubtaskList().add(subtask);
+                subtask.getEpic().setStartTime();
+                subtask.getEpic().setDuration();
+                subtask.getEpic().setEndTime();
             }
         }
     }
@@ -204,7 +203,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    private static FileBackedTasksManager loadFromFile(Path path) {
+    protected static FileBackedTasksManager loadFromFile(Path path) {
         FileBackedTasksManager manager = (FileBackedTasksManager) Managers.getDefault(String.valueOf(path.getFileName()));
         List<String> data = new ArrayList<>(manager.fromFileToString(path));
         int currentId = 0;
@@ -225,6 +224,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 }
             }
             manager.setId(currentId);
+        }
+        for (Task task : manager.getTaskStorage().values()) {
+            manager.getPrioritizedTasks().add(task);
+        }
+        for (Subtask subtask : manager.getSubtaskStorage().values()) {
+            manager.getPrioritizedTasks().add(subtask);
         }
         return manager;
     }

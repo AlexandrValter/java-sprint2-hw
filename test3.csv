@@ -1,0 +1,8 @@
+id,type,name,status,description,epic
+1,TASK,Задача №1,NEW,Задача №1 для тестов,2022-04-11T09:00,PT2H
+2,TASK,Задача №2,NEW,Задача №2 для тестов,2021-07-27T11:35,PT2H39M
+3,EPIC,Эпик №1,NEW,null,2021-08-09T12:00,PT4H45M
+4,SUBTASK,Подзадача №1,NEW,null,2021-08-09T12:00,PT1H36M,3
+5,SUBTASK,Подзадача №2,NEW,null,2021-12-16T14:18,PT3H9M,3
+
+3,2,5,4,1
