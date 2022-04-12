@@ -10,7 +10,7 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Subtask> subtaskStorage = new HashMap<>();
     private Integer id = 0;
     private final HistoryManager history = Managers.getDefaultHistoryManager();
-    Comparator<Task> comparator = (o1, o2) -> o1.getStartTime().compareTo(o2.getStartTime());
+    private final Comparator<Task> comparator = Comparator.comparing(Task::getStartTime);
     private final TreeSet<Task> sortedTasks = new TreeSet<>(comparator);
 
     @Override
@@ -22,14 +22,11 @@ public class InMemoryTaskManager implements TaskManager {
     public void addTask(Task task) {
         task.setId(makeId());
         taskStorage.put(task.getId(), task);
-        try {
-            if (!addTaskPermission(task)) {
-                throw new Exception("Задача пересекается по времени с другими задачами");
-            } else {
-                sortedTasks.add(task);
-            }
-        } catch (Exception e) {
-            System.out.println(e.fillInStackTrace());
+        if (!addTaskPermission(task)) {
+            throw new TaskValidationException("Задача '" + task.getName() +
+                    "' пересекается по времени с другими задачами");
+        } else {
+            sortedTasks.add(task);
         }
     }
 
@@ -43,14 +40,11 @@ public class InMemoryTaskManager implements TaskManager {
     public void addSubtask(Subtask subtask) {
         subtask.setId(makeId());
         subtaskStorage.put(subtask.getId(), subtask);
-        try {
-            if (!addTaskPermission(subtask)) {
-                throw new Exception("Задача пересекается по времени с другими задачами");
-            } else {
-                sortedTasks.add(subtask);
-            }
-        } catch (Exception e) {
-            System.out.println(e.fillInStackTrace());
+        if (!addTaskPermission(subtask)) {
+            throw new TaskValidationException("Подзадача '" + subtask.getName() +
+                    "' пересекается по времени с другими задачами");
+        } else {
+            sortedTasks.add(subtask);
         }
         epicStorage.get(subtask.getEpic().getId()).addSubtaskToEpic(subtask);
         subtask.getEpic().setStatus(getEpicStatus(subtask.getEpic().getId()));
@@ -207,31 +201,6 @@ public class InMemoryTaskManager implements TaskManager {
         return null;
     }
 
-    private Statuses getEpicStatus(int id) {
-        List<Statuses> statusSubtasks = new ArrayList<>();
-        Statuses status = null;
-        boolean amount = epicStorage.get(id).getSubtaskList().isEmpty();
-        if (amount) {
-            status = Statuses.NEW;
-        } else {
-            for (int i = 0; i < epicStorage.get(id).getSubtaskList().size(); i++) {
-                statusSubtasks.add(epicStorage.get(id).getSubtaskList().get(i).getStatus());
-            }
-            if (statusSubtasks.contains(Statuses.NEW)) {
-                status = Statuses.NEW;
-            } else if (statusSubtasks.contains(Statuses.DONE) && !statusSubtasks.contains(Statuses.NEW)
-                    && !statusSubtasks.contains(Statuses.IN_PROGRESS)) {
-                status = Statuses.DONE;
-            }
-            if (statusSubtasks.contains(Statuses.IN_PROGRESS)) {
-                status = Statuses.IN_PROGRESS;
-            } else if (statusSubtasks.contains(Statuses.NEW) && statusSubtasks.contains(Statuses.DONE)) {
-                status = Statuses.IN_PROGRESS;
-            }
-        }
-        return status;
-    }
-
     public HashMap<Integer, Task> getTaskStorage() {
         return taskStorage;
     }
@@ -246,10 +215,6 @@ public class InMemoryTaskManager implements TaskManager {
 
     public HistoryManager getHistory() {
         return history;
-    }
-
-    private int makeId() {
-        return ++id;
     }
 
     public void setId(Integer id) {
@@ -273,5 +238,34 @@ public class InMemoryTaskManager implements TaskManager {
             }
             return lower.getEndTime().isBefore(task.getStartTime()) && higher.getStartTime().isAfter(task.getEndTime());
         }
+    }
+
+    private int makeId() {
+        return ++id;
+    }
+
+    private Statuses getEpicStatus(int id) {
+        List<Statuses> statusSubtasks = new ArrayList<>();
+        Statuses status = null;
+        boolean amount = epicStorage.get(id).getSubtaskList().isEmpty();
+        if (amount) {
+            status = Statuses.NEW;
+        } else {
+            for (int i = 0; i < epicStorage.get(id).getSubtaskList().size(); i++) {
+                statusSubtasks.add(epicStorage.get(id).getSubtaskList().get(i).getStatus());
+            }
+            if (statusSubtasks.contains(Statuses.NEW)) {
+                status = Statuses.NEW;
+            } else if (statusSubtasks.contains(Statuses.DONE) && !statusSubtasks.contains(Statuses.NEW)
+                    && !statusSubtasks.contains(Statuses.IN_PROGRESS)) {
+                status = Statuses.DONE;
+            }
+            if (statusSubtasks.contains(Statuses.IN_PROGRESS)) {
+                status = Statuses.IN_PROGRESS;
+            } else if (statusSubtasks.contains(Statuses.NEW) && statusSubtasks.contains(Statuses.DONE)) {
+                status = Statuses.IN_PROGRESS;
+            }
+        }
+        return status;
     }
 }

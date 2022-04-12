@@ -62,7 +62,7 @@ public class Epic extends Task {
     }
 
     public void setEndTime() {
-        LocalDateTime time = null;
+        LocalDateTime time;
         if (!subtaskList.isEmpty()) {
             if (subtaskList.size() == 1) {
                 endTime = subtaskList.get(0).getEndTime();

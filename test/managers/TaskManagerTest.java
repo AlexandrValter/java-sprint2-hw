@@ -2,6 +2,7 @@ package managers;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import tasks.*;
 
 import java.time.Duration;
@@ -369,14 +370,20 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         manager.addTask(task1);
         Task testTask = task1;
         assertEquals(1, manager.getPrioritizedTasks().size());
-        manager.addTask(testTask);
+        assertThrows(
+                TaskValidationException.class,
+                () -> manager.addTask(testTask)
+        );
         assertEquals(1, manager.getPrioritizedTasks().size());
         manager.addEpic(epic1);
         Subtask subtask1 = new Subtask("Подзадача №1", epic1, "09.08.2021 12:00", 96);
         manager.addSubtask(subtask1);
         assertEquals(2, manager.getPrioritizedTasks().size());
         Subtask testSubtask = subtask1;
-        manager.addSubtask(testSubtask);
+        assertThrows(
+                TaskValidationException.class,
+                () -> manager.addTask(testSubtask)
+        );
         assertEquals(2, manager.getPrioritizedTasks().size());
     }
 }

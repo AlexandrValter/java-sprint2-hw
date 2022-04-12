@@ -145,6 +145,37 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
+    protected static FileBackedTasksManager loadFromFile(Path path) {
+        FileBackedTasksManager manager = (FileBackedTasksManager) Managers.getDefault(String.valueOf(path.getFileName()));
+        List<String> data = new ArrayList<>(manager.fromFileToString(path));
+        int currentId = 0;
+        if (!data.isEmpty()) {
+            for (int i = 1; i < data.size(); i++) {
+                String[] split = data.get(i).split(",");
+                if ((data.get(i - 1).split(",")[0].equals("")) && (!split[0].isBlank())) {
+                    manager.historyAllocation(fromString(split), manager);
+                    break;
+                } else {
+                    while (true) {
+                        manager.taskAllocation(split, manager);
+                        if (!split[0].isBlank() && currentId < Integer.valueOf(split[0])) {
+                            currentId = Integer.valueOf(split[0]);
+                        }
+                        break;
+                    }
+                }
+            }
+            manager.setId(currentId);
+        }
+        for (Task task : manager.getTaskStorage().values()) {
+            manager.getPrioritizedTasks().add(task);
+        }
+        for (Subtask subtask : manager.getSubtaskStorage().values()) {
+            manager.getPrioritizedTasks().add(subtask);
+        }
+        return manager;
+    }
+
     private static String toString(HistoryManager manager) {
         String result = "";
         for (int i = 0; i < (manager.getHistory().size() - 1); i++) {
@@ -201,36 +232,5 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             }
             manager.getHistory().addElement(task);
         }
-    }
-
-    protected static FileBackedTasksManager loadFromFile(Path path) {
-        FileBackedTasksManager manager = (FileBackedTasksManager) Managers.getDefault(String.valueOf(path.getFileName()));
-        List<String> data = new ArrayList<>(manager.fromFileToString(path));
-        int currentId = 0;
-        if (!data.isEmpty()) {
-            for (int i = 1; i < data.size(); i++) {
-                String[] split = data.get(i).split(",");
-                if ((data.get(i - 1).split(",")[0].equals("")) && (!split[0].isBlank())) {
-                    manager.historyAllocation(fromString(split), manager);
-                    break;
-                } else {
-                    while (true) {
-                        manager.taskAllocation(split, manager);
-                        if (!split[0].isBlank() && currentId < Integer.valueOf(split[0])) {
-                            currentId = Integer.valueOf(split[0]);
-                        }
-                        break;
-                    }
-                }
-            }
-            manager.setId(currentId);
-        }
-        for (Task task : manager.getTaskStorage().values()) {
-            manager.getPrioritizedTasks().add(task);
-        }
-        for (Subtask subtask : manager.getSubtaskStorage().values()) {
-            manager.getPrioritizedTasks().add(subtask);
-        }
-        return manager;
     }
 }
