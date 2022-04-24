@@ -1,5 +1,7 @@
 import managers.*;
 
+import managers.api.HttpTaskServer;
+import managers.http_backup.HttpTaskManager;
 import tasks.*;
 
 import java.util.ArrayList;
@@ -7,7 +9,9 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        FileBackedTasksManager manager = (FileBackedTasksManager) Managers.getDefault("backup.csv");
+        HttpTaskManager manager = (HttpTaskManager) Managers.getDefault();
+        HttpTaskServer server = new HttpTaskServer(manager);
+        server.startServer();
         Task task1 = new Task("Задача №1", "Описание задачи №1", "11.01.2022 09:00", 120);
         manager.addTask(task1);
         Task task2 = new Task("Задача №2", "Описание задачи №2", "10.01.2022 21:00", 45);
@@ -36,6 +40,7 @@ public class Main {
         manager.getSubtask(7);
         manager.getEpic(4);
         printList(manager.getHistoryList());
+        System.out.println(manager.getPrioritizedTasks());
     }
 
     //метод для вывода истории просмотров задач при тестах

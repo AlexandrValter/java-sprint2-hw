@@ -10,15 +10,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
-    private final Path fileBacked;
+    private Path fileBacked;
 
-    public static void main(String[] args) {
-        FileBackedTasksManager manager = loadFromFile(Paths.get("backup.csv"));
-        System.out.println(manager.getHistoryList());
-        System.out.println(manager.getAllTasks());
-        System.out.println(manager.getAllEpics());
-        System.out.println(manager.getAllSubtasks());
-        System.out.println(manager.getPrioritizedTasks());
+    public FileBackedTasksManager() {
     }
 
     public FileBackedTasksManager(String fileName) {
@@ -176,7 +170,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return manager;
     }
 
-    private static String toString(HistoryManager manager) {
+    protected static String toString(HistoryManager manager) {
         String result = "";
         for (int i = 0; i < (manager.getHistory().size() - 1); i++) {
             result += manager.getHistory().get(i).getId() + ",";

@@ -1,5 +1,7 @@
 package managers;
 
+import managers.http_backup.HttpTaskManager;
+
 public abstract class Managers {
 
     public static HistoryManager getDefaultHistoryManager() {
@@ -7,7 +9,7 @@ public abstract class Managers {
     }
 
     public static TaskManager getDefault() {
-        return new InMemoryTaskManager();
+        return new HttpTaskManager("http://localhost:");
     }
 
     public static TaskManager getDefault(String filename) {

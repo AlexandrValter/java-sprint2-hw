@@ -2,6 +2,8 @@ package tasks;
 
 import managers.Managers;
 import managers.TaskManager;
+import managers.http_backup.KVServer;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,6 +17,11 @@ class EpicTest {
     @BeforeEach
     public void createManager() {
         manager = Managers.getDefault();
+    }
+
+    @AfterEach
+    public void stopServer() {
+        KVServer.stop();
     }
 
     @Test
